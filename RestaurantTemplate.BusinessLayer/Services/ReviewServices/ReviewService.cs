@@ -20,7 +20,7 @@ namespace RestaurantTemplate.BusinessLayer.Services.ReviewServices
 
         public Task<List<Review>> GetAllAsync()
         {
-            return _review.Find(review => true).ToListAsync();
+            return _review.Find(rev => true).ToListAsync();
         }
 
         public async Task<Review> CreateAsync(Review review)
@@ -29,15 +29,15 @@ namespace RestaurantTemplate.BusinessLayer.Services.ReviewServices
             return review;
         }
 
-        public async Task<Review> UpdateAsync(string id, Review reviewIn)
+        public async Task<Review> UpdateAsync(Review review)
         {
-            await _review.ReplaceOneAsync(review => review.Id == id, reviewIn);
-            return reviewIn;
+            await _review.ReplaceOneAsync(rev => rev.Id == review.Id, review);
+            return review;
         }
 
-        public async Task DeleteAsync(Review review)
+        public async Task DeleteAsync(string Id)
         {
-            await _review.DeleteOneAsync(rev => rev.Id == review.Id);
+            await _review.DeleteOneAsync(rev => rev.Id == Id);
         }
     }
 }

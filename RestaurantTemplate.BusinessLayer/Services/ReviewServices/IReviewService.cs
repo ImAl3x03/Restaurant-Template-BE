@@ -10,8 +10,8 @@ namespace RestaurantTemplate.BusinessLayer.Services.ReviewServices
 
         public Task<Review> CreateAsync(Review review);
 
-        public Task<Review> UpdateAsync(string id, Review reviewIn);
+        public Task<Review> UpdateAsync(Review review);
 
-        public Task DeleteAsync(Review review);
+        public Task DeleteAsync(string Id);
     }
 }
