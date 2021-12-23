@@ -9,6 +9,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\RestaurantTemplate.BusinessLayer\RestaurantTemplate.BusinessLayer.csproj" />
     <ProjectReference Include="..\RestaurantTemplate.DataAccessLayer\RestaurantTemplate.DataAccessLayer.csproj" />
   </ItemGroup>
 
