@@ -6,6 +6,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\RestaurantTemplate.DataAccessLayer\RestaurantTemplate.DataAccessLayer.csproj" />
+    <ProjectReference Include="..\RestaurantTemplate.Shared\RestaurantTemplate.Shared.csproj" />
   </ItemGroup>
 
 </Project>

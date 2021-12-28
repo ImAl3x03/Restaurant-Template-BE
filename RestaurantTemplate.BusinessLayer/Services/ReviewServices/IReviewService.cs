@@ -1,4 +1,6 @@
 ﻿using RestaurantTemplate.DataAccessLayer.Entities;
+using RestaurantTemplate.Shared;
+using RestaurantTemplate.Shared.RequestModel;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -8,10 +10,10 @@ namespace RestaurantTemplate.BusinessLayer.Services.ReviewServices
     {
         public Task<List<Review>> GetAllAsync();
 
-        public Task<Review> CreateAsync(Review review);
+        public Task<Response> CreateAsync(ReviewRequest reviewReq);
 
-        public Task<Review> UpdateAsync(Review review);
+        public Task<Response> UpdateAsync(Review review);
 
-        public Task DeleteAsync(string Id);
+        public Task<Response> DeleteAsync(string Id);
     }
 }

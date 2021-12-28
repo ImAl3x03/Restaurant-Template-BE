@@ -1,6 +1,8 @@
 ﻿using MongoDB.Driver;
 using RestaurantTemplate.DataAccessLayer;
 using RestaurantTemplate.DataAccessLayer.Entities;
+using RestaurantTemplate.Shared;
+using RestaurantTemplate.Shared.RequestModel;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -23,21 +25,81 @@ namespace RestaurantTemplate.BusinessLayer.Services.ReviewServices
             return _review.Find(rev => true).ToListAsync();
         }
 
-        public async Task<Review> CreateAsync(Review review)
+        public async Task<Response> CreateAsync(ReviewRequest reviewReq)
         {
+            var review = new Review
+            {
+                Id = null,
+                Name = reviewReq.Name,
+                Text = reviewReq.Text,
+                Star = reviewReq.Star
+            };
+
             await _review.InsertOneAsync(review);
-            return review;
+            return new Response
+            {
+                StatusCode = 200,
+                Error = ""
+            };
         }
 
-        public async Task<Review> UpdateAsync(Review review)
+        public async Task<Response> UpdateAsync(Review review)
         {
+            if (string.IsNullOrEmpty(review.Id) || review.Id.Trim().Length != 24)
+            {
+                return new Response
+                {
+                    StatusCode = 400,
+                    Error = "Id is not allowed"
+                };
+            }
+
+            if (!(await _review.FindAsync(rev => rev.Id == review.Id)).Any<Review>())
+            {
+                return new Response
+                {
+                    StatusCode = 404,
+                    Error = "Id not found"
+                };
+            }
+
             await _review.ReplaceOneAsync(rev => rev.Id == review.Id, review);
-            return review;
+            return new Response
+            {
+                StatusCode = 200,
+                Error = ""
+            };
         }
 
-        public async Task DeleteAsync(string Id)
+        public async Task<Response> DeleteAsync(string Id)
         {
-            await _review.DeleteOneAsync(rev => rev.Id == Id);
+            if (string.IsNullOrEmpty(Id) || Id.Trim().Length != 24)
+            {
+                return new Response
+                {
+                    StatusCode = 400,
+                    Error = "Id is not allowed"
+                };
+            }
+
+            var rev = await _review.DeleteOneAsync(rev => rev.Id == Id);
+
+            if (rev.DeletedCount == 0)
+            {
+                return new Response
+                {
+                    StatusCode = 404,
+                    Error = "Id not found"
+                };
+            }
+            else
+            {
+                return new Response
+                {
+                    StatusCode = 200,
+                    Error = ""
+                };
+            }
         }
     }
 }

@@ -1,6 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using RestaurantTemplate.BusinessLayer.Services.ReviewServices;
 using RestaurantTemplate.DataAccessLayer.Entities;
+using RestaurantTemplate.Shared;
+using RestaurantTemplate.Shared.RequestModel;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -8,6 +11,7 @@ namespace RestaurantTemplate.Controller
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Produces("application/json")]
     public class ReviewController : ControllerBase
     {
         private readonly ReviewService _reviewService;
@@ -24,21 +28,34 @@ namespace RestaurantTemplate.Controller
         }
 
         [HttpPost]
-        public async Task<ActionResult<Review>> Create(Review review)
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(string))]
+        public async Task<ActionResult<Response>> Create(ReviewRequest reviewReq)
         {
-            return await _reviewService.CreateAsync(review);
+            var response = await _reviewService.CreateAsync(reviewReq);
+
+            return StatusCode(response.StatusCode, response.Error);
         }
 
         [HttpPut]
-        public async Task<ActionResult<Review>> Update(Review review)
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(string))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(string))]
+        [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(string))]
+        public async Task<ActionResult<Response>> Update(Review review)
         {
-            return await _reviewService.UpdateAsync(review);
+            var response = await _reviewService.UpdateAsync(review);
+
+            return StatusCode(response.StatusCode, response.Error);
         }
 
         [HttpDelete]
-        public async Task Delete(string Id)
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(string))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(string))]
+        [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(string))]
+        public async Task<ActionResult<Response>> Delete(string Id)
         {
-            await _reviewService.DeleteAsync(Id);
+            var response = await _reviewService.DeleteAsync(Id);
+
+            return StatusCode(response.StatusCode, response.Error);
         }
     }
 }
