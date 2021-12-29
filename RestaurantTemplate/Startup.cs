@@ -3,7 +3,10 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
+using RestaurantTemplate.BusinessLayer.Services.ReviewServices;
+using RestaurantTemplate.DataAccessLayer;
 
 namespace RestaurantTemplate
 {
@@ -19,6 +22,15 @@ namespace RestaurantTemplate
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddCors();
+
+            services.Configure<DatabaseSetting>(
+                Configuration.GetSection(nameof(DatabaseSetting)));
+
+            services.AddSingleton<IDatabaseSetting>(sp =>
+                sp.GetRequiredService<IOptions<DatabaseSetting>>().Value);
+
+            services.AddSingleton<ReviewService>();
 
             services.AddControllers();
             services.AddSwaggerGen(c =>
@@ -40,6 +52,12 @@ namespace RestaurantTemplate
             app.UseHttpsRedirection();
 
             app.UseRouting();
+
+            app.UseCors(x => x
+                .AllowAnyMethod()
+                .AllowAnyHeader()
+                .SetIsOriginAllowed(origin => true)
+                .AllowCredentials());
 
             app.UseAuthorization();
 
