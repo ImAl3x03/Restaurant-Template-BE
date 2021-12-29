@@ -20,9 +20,9 @@ namespace RestaurantTemplate.BusinessLayer.Services.ReviewServices
             _review = database.GetCollection<Review>(this._collection);
         }
 
-        public Task<List<Review>> GetAllAsync()
+        public async Task<List<Review>> GetAllAsync()
         {
-            return _review.Find(rev => true).ToListAsync();
+            return await (await _review.FindAsync(res => true)).ToListAsync();
         }
 
         public async Task<Response> CreateAsync(ReviewRequest reviewReq)

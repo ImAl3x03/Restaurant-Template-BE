@@ -22,9 +22,13 @@ namespace RestaurantTemplate.Controller
         }
 
         [HttpGet]
-        public async Task<List<Review>> Get()
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(List<Review>))]
+        [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(string))]
+        public async Task<ActionResult<List<Review>>> Get()
         {
-            return await _reviewService.GetAllAsync();
+            var result = await _reviewService.GetAllAsync();
+
+            return result == null || result.Count == 0 ? NotFound("There aren't reviews") : Ok(result);
         }
 
         [HttpPost]
