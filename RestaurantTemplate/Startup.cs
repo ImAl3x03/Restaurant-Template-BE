@@ -30,7 +30,7 @@ namespace RestaurantTemplate
             services.AddSingleton<IDatabaseSetting>(sp =>
                 sp.GetRequiredService<IOptions<DatabaseSetting>>().Value);
 
-            services.AddSingleton<ReviewService>();
+            services.AddScoped<IReviewService, ReviewService>();
 
             services.AddControllers();
             services.AddSwaggerGen(c =>
