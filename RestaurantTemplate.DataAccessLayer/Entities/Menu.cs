@@ -13,7 +13,7 @@ namespace RestaurantTemplate.DataAccessLayer.Entities
         public string Name { get; set; }
         public string Category { get; set; }
 
-        public List<string> Ingrediants { get; set; }
+        public List<string> Ingredients { get; set; }
         public List<string> Allergens { get; set; }
 
         public double Price { get; set; }

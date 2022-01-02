@@ -1,6 +1,8 @@
 ﻿using MongoDB.Driver;
 using RestaurantTemplate.DataAccessLayer;
 using RestaurantTemplate.DataAccessLayer.Entities;
+using RestaurantTemplate.Shared;
+using RestaurantTemplate.Shared.RequestModel;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -18,7 +20,7 @@ namespace RestaurantTemplate.BusinessLayer.Services.MenuServices
             _menu = database.GetCollection<Menu>(this._collection);
         }
 
-        public async Task<Dictionary<string, List<Menu>>> Get()
+        public async Task<Dictionary<string, List<Menu>>> GetAsync()
         {
             var resultFromDb = await (await _menu.FindAsync(m => true)).ToListAsync();
 
@@ -40,24 +42,81 @@ namespace RestaurantTemplate.BusinessLayer.Services.MenuServices
             return result;
         }
 
-        public async Task<string> Create(Menu menu)
+        public async Task<Response> CreateAsync(MenuRequest menuRequest)
         {
+            var menu = new Menu()
+            {
+                Id = null,
+                Name = menuRequest.Name,
+                Category = menuRequest.Category,
+                Ingredients = menuRequest.Ingredients,
+                Allergens = menuRequest.Allergens,
+                Price = menuRequest.Price
+            };
+
             await _menu.InsertOneAsync(menu);
-            return "";
+            return new Response()
+            {
+                StatusCode = 200,
+                Error = ""
+            };
         }
 
-        public async Task<string> Update(Menu menu)
+        public async Task<Response> UpdateAsync(Menu menu)
         {
+            if (string.IsNullOrEmpty(menu.Id) || menu.Id.Trim().Length != 24)
+            {
+                return new Response()
+                {
+                    StatusCode = 400,
+                    Error = "Id is not valid"
+                };
+            }
+
+            if (!(await _menu.FindAsync(m => m.Id == menu.Id)).Any<Menu>())
+            {
+                return new Response()
+                {
+                    StatusCode = 404,
+                    Error = "Id not found"
+                };
+            }
+
             await _menu.ReplaceOneAsync(e => e.Id == menu.Id, menu);
 
-            return "";
+            return new Response()
+            {
+                StatusCode = 200,
+                Error = ""
+            };
         }
 
-        public async Task<string> Delete(string id)
+        public async Task<Response> DeleteAsync(string id)
         {
-            await _menu.DeleteOneAsync(id);
+            if (string.IsNullOrEmpty(id) || id.Trim().Length != 24)
+            {
+                return new Response()
+                {
+                    StatusCode = 400,
+                    Error = "Id is not valid"
+                };
+            }
 
-            return "";
+            var result = await _menu.DeleteOneAsync(id);
+            if (result.DeletedCount == 0)
+            {
+                return new Response()
+                {
+                    StatusCode = 404,
+                    Error = "Id not found"
+                };
+            }
+
+            return new Response()
+            {
+                StatusCode = 200,
+                Error = ""
+            };
         }
 
     }

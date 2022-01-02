@@ -1,4 +1,6 @@
 ﻿using RestaurantTemplate.DataAccessLayer.Entities;
+using RestaurantTemplate.Shared;
+using RestaurantTemplate.Shared.RequestModel;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -6,12 +8,12 @@ namespace RestaurantTemplate.BusinessLayer.Services.MenuServices
 {
     public interface IMenuServices
     {
-        public Task<Dictionary<string, List<Menu>>> Get();
+        public Task<Dictionary<string, List<Menu>>> GetAsync();
 
-        public Task<string> Create(Menu menu);
+        public Task<Response> CreateAsync(MenuRequest menuRequest);
 
-        public Task<string> Update(Menu menu);
+        public Task<Response> UpdateAsync(Menu menu);
 
-        public Task<string> Delete(string id);
+        public Task<Response> DeleteAsync(string id);
     }
 }
