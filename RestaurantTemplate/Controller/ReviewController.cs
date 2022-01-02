@@ -55,9 +55,9 @@ namespace RestaurantTemplate.Controller
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(string))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(string))]
         [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(string))]
-        public async Task<ActionResult<Response>> Delete(string Id)
+        public async Task<ActionResult<Response>> Delete(string id)
         {
-            var response = await _reviewService.DeleteAsync(Id);
+            var response = await _reviewService.DeleteAsync(id);
 
             return StatusCode(response.StatusCode, response.Error);
         }
