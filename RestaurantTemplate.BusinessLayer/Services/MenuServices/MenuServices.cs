@@ -22,7 +22,7 @@ namespace RestaurantTemplate.BusinessLayer.Services.MenuServices
 
         public async Task<Dictionary<string, List<Menu>>> GetAsync()
         {
-            var resultFromDb = await (await _menu.FindAsync(m => true)).ToListAsync();
+            var resultFromDb = await _menu.AsQueryable<Menu>().ToListAsync();
 
             Dictionary<string, List<Menu>> result = new();
 
