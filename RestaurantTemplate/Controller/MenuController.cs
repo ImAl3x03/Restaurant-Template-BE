@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using RestaurantTemplate.BusinessLayer.Services.ReviewServices;
+using RestaurantTemplate.BusinessLayer.Services.MenuServices;
 using RestaurantTemplate.DataAccessLayer.Entities;
 using RestaurantTemplate.Shared;
 using RestaurantTemplate.Shared.RequestModel;
@@ -9,33 +9,31 @@ using System.Threading.Tasks;
 
 namespace RestaurantTemplate.Controller
 {
-    [Route("api/[controller]")]
     [ApiController]
+    [Route("api/[controller]")]
     [Produces("application/json")]
-    public class ReviewController : ControllerBase
+    public class MenuController : ControllerBase
     {
-        private readonly IReviewService _reviewService;
+        private readonly IMenuServices _services;
 
-        public ReviewController(IReviewService reviewService)
+        public MenuController(IMenuServices services)
         {
-            _reviewService = reviewService;
+            _services = services;
         }
 
         [HttpGet]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(List<Review>))]
-        [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(string))]
-        public async Task<ActionResult<List<Review>>> Get()
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Dictionary<string, List<Menu>>))]
+        public async Task<Dictionary<string, List<Menu>>> Get()
         {
-            var result = await _reviewService.GetAllAsync();
-
-            return result == null || result.Count == 0 ? NotFound("There aren't reviews") : Ok(result);
+            var result = await _services.GetAsync();
+            return result;
         }
 
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(string))]
-        public async Task<ActionResult<Response>> Create(ReviewRequest reviewReq)
+        public async Task<ActionResult<Response>> AddMenu(MenuRequest menu)
         {
-            var response = await _reviewService.CreateAsync(reviewReq);
+            var response = await _services.CreateAsync(menu);
 
             return StatusCode(response.StatusCode, response.Error);
         }
@@ -44,9 +42,9 @@ namespace RestaurantTemplate.Controller
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(string))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(string))]
         [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(string))]
-        public async Task<ActionResult<Response>> Update(Review review)
+        public async Task<ActionResult<Response>> UpdateMenu(Menu menu)
         {
-            var response = await _reviewService.UpdateAsync(review);
+            var response = await _services.UpdateAsync(menu);
 
             return StatusCode(response.StatusCode, response.Error);
         }
@@ -55,9 +53,9 @@ namespace RestaurantTemplate.Controller
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(string))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(string))]
         [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(string))]
-        public async Task<ActionResult<Response>> Delete(string id)
+        public async Task<ActionResult<Response>> DeleteMenu(string Id)
         {
-            var response = await _reviewService.DeleteAsync(id);
+            var response = await _services.DeleteAsync(Id);
 
             return StatusCode(response.StatusCode, response.Error);
         }

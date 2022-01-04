@@ -5,6 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
+using RestaurantTemplate.BusinessLayer.Services.MenuServices;
 using RestaurantTemplate.BusinessLayer.Services.ReviewServices;
 using RestaurantTemplate.DataAccessLayer;
 
@@ -31,6 +32,7 @@ namespace RestaurantTemplate
                 sp.GetRequiredService<IOptions<DatabaseSetting>>().Value);
 
             services.AddScoped<IReviewService, ReviewService>();
+            services.AddScoped<IMenuServices, MenuServices>();
 
             services.AddControllers();
             services.AddSwaggerGen(c =>
