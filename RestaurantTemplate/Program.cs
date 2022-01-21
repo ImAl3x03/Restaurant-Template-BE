@@ -1,20 +1,39 @@
-using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Options;
+using RestaurantTemplate.BusinessLayer.Services.MenuServices;
+using RestaurantTemplate.BusinessLayer.Services.ReviewServices;
+using RestaurantTemplate.DataAccessLayer;
 
-namespace RestaurantTemplate
+var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddControllers();
+
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
+
+builder.Services.Configure<DatabaseSetting>(
+    builder.Configuration.GetSection(nameof(DatabaseSetting)));
+
+builder.Services.AddSingleton<IDatabaseSetting>(sp =>
+    sp.GetRequiredService<IOptions<DatabaseSetting>>().Value);
+
+builder.Services.AddScoped<IReviewService, ReviewService>();
+builder.Services.AddScoped<IMenuServices, MenuServices>();
+
+var app = builder.Build();
+
+if (app.Environment.IsDevelopment())
 {
-    public class Program
-    {
-        public static void Main(string[] args)
-        {
-            CreateHostBuilder(args).Build().Run();
-        }
-
-        public static IHostBuilder CreateHostBuilder(string[] args) =>
-            Host.CreateDefaultBuilder(args)
-                .ConfigureWebHostDefaults(webBuilder =>
-                {
-                    webBuilder.UseStartup<Startup>();
-                });
-    }
+    app.UseSwagger();
+    app.UseSwaggerUI();
 }
+
+app.UseHttpsRedirection();
+
+app.UseAuthorization();
+
+app.MapControllers();
+
+app.Run();
